@@ -1,15 +1,17 @@
-# read in watermelon gff
-# " " watermelon fsa
-# extract all the features from the genome
+import argparse
 
-# call this parse_GFF
+# create an ArgumentParser object ('parser') that will hold all the information necessary
+# to parse the command line
+parser = argparse.ArgumentParser(description = "automatically parses a GFF file")
 
-dirname = "/home/mjmurphy/projects/BIOL5153/watermelon_files/"
+# add positional (required) arguments
+parser.add_argument( "-f", "--FASTA_name", help = "the name of the FASTA file" )
+parser.add_argument( "-g" "--GFF_name", help = "the name of the GFF file" )
+# add optional arguments
+
+
 
 # open the required files
-FASTA_name = dirname+"watermelon.fsa"
-GFF_name = dirname+"watermelon.gff"
-
 FASTA_open = open(FASTA_name)
 GFF = open(GFF_name, "r")
 
