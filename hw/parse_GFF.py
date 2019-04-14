@@ -6,14 +6,14 @@ parser = argparse.ArgumentParser(description = "automatically parses a GFF file"
 
 # add positional (required) arguments
 parser.add_argument( "-f", "--FASTA_name", help = "the name of the FASTA file" )
-parser.add_argument( "-g" "--GFF_name", help = "the name of the GFF file" )
+parser.add_argument( "-g", "--GFF_name", help = "the name of the GFF file" )
 # add optional arguments
 
-
+args = parser.parse_args()
 
 # open the required files
-FASTA_open = open(FASTA_name)
-GFF = open(GFF_name, "r")
+FASTA_open = open(args.FASTA_name)
+GFF = open(args.GFF_name, "r")
 
 # strip out the header from the sequence
 # the variable 'genome' holds the genome sequence
