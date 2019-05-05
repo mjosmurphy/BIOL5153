@@ -2,16 +2,49 @@ from datetime import date, datetime, timedelta
 import mysql.connector
 import argparse
 
+
 # define acceptable Yes/No responses:
-affirmation = [Y, y, YES, Yes, yes]
-declination = [N, n, NO, No, no]
+affirmation = ['Y', 'y', 'YES', 'Yes', 'yes']
+declination = ['N', 'n', 'NO', 'No', 'no']
+# initialize standard iterator
+i = int()
+date = str()
+site = str()
+name = []
+n = []
+weather = {
+	"cloud_cover" : str(),
+	"precipitation" : str(),
+	"temperature" : int(),
+	"wind_speed" : int(),
+	"data_source" : str()
+}
 
 # define functions for identifying data to be added:
+def add_collection_info(*args):
+	# set iterator to 0; loop execution will depend on user input
+	i = 0
+	while (i<1):
+
+		# user input: date and site information
+		date = input("Date collected ( format: YYYY-MM-DD ): ")
+		site = input("Field site where collected: ")
+
+		# confirm user input for date and site information
+		print("You collected these data on " + date + " at " + site + "\n")
+		ans = input("Is this correct? (Y/n): ")
+
+		# if not correct, prompt to re-enter (go to beginning of loop)
+		if ans in affirmation:
+			i+= 1
+			return(date,site)
+		else:
+			i = 0
+
 def add_species(*args):
 	# Add species one by one
 	i = int()
 	i = 0
-	print("Now add species observations:")
 	while (i<1):
 		# for a single species, input the name and # observed:
 		sp_name = ""
@@ -28,11 +61,12 @@ def add_species(*args):
 		n.append(sp_n)
 
 		# print off the list of all species and numbers:
+
 		# ask whether this is all
 		more_test = input("Any more species to add? (Y/n) ")
 
 		# if so, then keep the loop open
-		if(more_test in affirmation):
+		if(more_test == 'Y'):
 			i=0
 
 		# if not, close the loop and return the values
@@ -44,7 +78,6 @@ def add_species(*args):
 
 def add_weather(*args):
 	# Add weather information
-	print("Now add weather for the current observation:")
 	weather["cloud_cover"] = input("Cloud cover: ")
 	weather["precipitation"] = input("Describe precipitation: ")
 	weather["temperature"] = input("Temperature (in deg. C): ")
@@ -55,22 +88,18 @@ def add_weather(*args):
 def add_notes(*args):
 	# Add optional notes for this entry
 	i = int()
-	ans = chr()
+	ans = str()
 	i = 0
 	while (i<1):
-		note = input("Notes for this entry: /n")
-		print("Your notes for this entry: /n" note)
-		ans = input("Is this correct?")
+		note = input("Notes for this entry: ")
+		print("Your note: " + "\n" + note)
+		ans = input("Is this correct? (Y/n) ")
 		if ans in affirmation:
 			i += 1
 			return(note)
 		elif ans in declination:
 			i = 0
 			print("Note deleted; re-enter your notes ...")
-		else:
-			print("Error! Re-enter your notes.")
-			i = 0
-
 
 # define function for committing data to the database:
 def input_species(species):
@@ -133,33 +162,25 @@ def input_notes(note):
 	cursor.close()
 	cnx.close()
 
-# add object names ...
-print("Now to add new observations")
-name = []
-n = []
-weather = {
-	"cloud_cover" : str(),
-	"precipitation" : str(),
-	"temperature" : int(),
-	"wind_speed" : int(),
-	"data_source" : str()
-}
+print("======= Add collection info =======")
+print("\n")
+add_collection_info()
+print("\n\n")
 
-date = input("Date collected ( format: YYYY-MM-DD ): ")
-site = input("Field site where collected: ")
-
-print("You collected these data on " + date + " at " + site + "\n\n\n")
-ans = input("Is this correct? (Y/n): ")
-
+print("=========== Add species ===========")
+print("\n")
 add_species()
+print("\n\n")
 
+print("=========== Add weather ===========")
+print("\n")
 add_weather()
+print("\n\n")
 
-print(name)
-print(n)
-print(weather)
-
-
+print("=========== Add notes =============")
+print("\n")
+add_notes()
+print("\n\n")
 
 # input the observations
 print("Inputting new observation(s) ... ")
