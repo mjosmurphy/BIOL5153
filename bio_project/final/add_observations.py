@@ -32,7 +32,7 @@ def add_species(*args):
 		more_test = input("Any more species to add? (Y/n) ")
 
 		# if so, then keep the loop open
-		if(more_test == 'Y'):
+		if(more_test in affirmation):
 			i=0
 
 		# if not, close the loop and return the values
@@ -42,24 +42,17 @@ def add_species(*args):
 			#print(n)
 			return(name,n)
 
-def add_weather()
+def add_weather(*args):
 	# Add weather information
 	print("Now add weather for the current observation:")
-	cloud_cover = input("Cloud cover: ")
-	precipitation = input("Describe precipitation: ")
-	temperature = input("Temperature (in deg. C): ")
-	wind_speed = input("Wind speed (in km/h): ")
-	data_source = input("Where did you get these data? ")
-	weather = {
-		"cloud_cover" : cloud_cover,
-		"precipitation" : precipitation,
-		"temperature" : temperature,
-		"wind_speed" : wind_speed,
-		"data_source" : data_source
-	}
+	weather["cloud_cover"] = input("Cloud cover: ")
+	weather["precipitation"] = input("Describe precipitation: ")
+	weather["temperature"] = input("Temperature (in deg. C): ")
+	weather["wind_speed"] = input("Wind speed (in km/h): ")
+	weather["data_source"] = input("Where did you get these data? ")
 	return(weather)
 
-def add_notes()
+def add_notes(*args):
 	# Add optional notes for this entry
 	i = int()
 	ans = chr()
@@ -80,7 +73,7 @@ def add_notes()
 
 
 # define function for committing data to the database:
-def input_species(species)
+def input_species(species):
 	cnx = mysql.connector.connect(user='mjmurphy', database='butterfly')
 	cursor = cnx.cursor()
 
@@ -98,7 +91,7 @@ def input_species(species)
 	cursor.close()
 	cnx.close()
 
-def input_weather(weather)
+def input_weather(weather):
 	cnx = mysql.connector.connect(user='mjmurphy', database='butterfly')
 	cursor = cnx.cursor()
 
@@ -119,7 +112,7 @@ def input_weather(weather)
 	cursor.close()
 	cnx.close()
 
-def input_notes(note)
+def input_notes(note):
 	cnx = mysql.connector.connect(user='mjmurphy', database='butterfly')
 	cursor = cnx.cursor()
 
@@ -144,6 +137,14 @@ def input_notes(note)
 print("Now to add new observations")
 name = []
 n = []
+weather = {
+	"cloud_cover" : str(),
+	"precipitation" : str(),
+	"temperature" : int(),
+	"wind_speed" : int(),
+	"data_source" : str()
+}
+
 date = input("Date collected ( format: YYYY-MM-DD ): ")
 site = input("Field site where collected: ")
 
@@ -152,10 +153,15 @@ ans = input("Is this correct? (Y/n): ")
 
 add_species()
 
+add_weather()
+
 print(name)
 print(n)
+print(weather)
 
-# add the observations
-print("Adding observation(s) ... ")
+
+
+# input the observations
+print("Inputting new observation(s) ... ")
 # add_observation(date, site, name, n)
-print("Observation(s) added!")
+print("Observation(s) added to the database!")
