@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+from collections import defaultdict
 import mysql.connector
 import argparse
 
@@ -20,7 +21,9 @@ weather = {
 	"data_source" : str()
 }
 
-# define functions for identifying data to be added:
+## Interactive data addition
+
+# populates date and site info there
 def add_collection_info(*args):
 	# set iterator to 0; loop execution will depend on user input
 	i = 0
@@ -41,6 +44,7 @@ def add_collection_info(*args):
 		else:
 			i = 0
 
+# creates 2 lists: one of species, one of # observed
 def add_species(*args):
 	# Add species one by one
 	i = int()
@@ -76,15 +80,17 @@ def add_species(*args):
 			#print(n)
 			return(name,n)
 
+# populates weather dictionary for observation
 def add_weather(*args):
 	# Add weather information
 	weather["cloud_cover"] = input("Cloud cover: ")
 	weather["precipitation"] = input("Describe precipitation: ")
 	weather["temperature"] = input("Temperature (in deg. C): ")
 	weather["wind_speed"] = input("Wind speed (in km/h): ")
-	weather["data_source"] = input("Where did you get these data? ")
+	weather["data_source"] = input("Data source: ")
 	return(weather)
 
+# allows user to add in notes
 def add_notes(*args):
 	# Add optional notes for this entry
 	i = int()
@@ -100,27 +106,10 @@ def add_notes(*args):
 		elif ans in declination:
 			i = 0
 			print("Note deleted; re-enter your notes ...")
-
 # define function for committing data to the database:
-def input_species(species):
-	cnx = mysql.connector.connect(user='mjmurphy', database='butterfly')
-	cursor = cnx.cursor()
 
-	# set up new observation
-	add_observation = ("INSERT INTO observation_book "
-	               "(date, site, name, n) "
-	               "VALUES (%s, %s, %s, %s, %s)")
-
-	insert_observation = species
-	# begin insert observation_book
-	cursor.execute(add_observation)
-
-	# commit new data and close the connection
-	cnx.commit()
-	cursor.close()
-	cnx.close()
-
-def input_weather(weather):
+# inserts weather data into the database
+def enter_weather(weather):
 	cnx = mysql.connector.connect(user='mjmurphy', database='butterfly')
 	cursor = cnx.cursor()
 
@@ -129,38 +118,16 @@ def input_weather(weather):
 	               "(date, cloud_cover, precipitation, temperature, wind_speed, data_source)"
 	               "VALUES (%s, %s, %s, %s, %s, %s)")
 
-	# begin insert observation_book
-	cursor.execute(insert_weather)
+	# add date and weather data
+	data_weather = (date, weather['cloud_cover'], weather['precipitation'], weather['tempterature'],weather['wind_speed'],weather['data_source'])
 
-	# add observation data
-	
-	cursor.execute(insert_weather)
+	# insert new weather data
+	cursor.execute(insert_weather, data_weather)
 
-	# commit new data and close the connection
 	cnx.commit()
 	cursor.close()
 	cnx.close()
 
-def input_notes(note):
-	cnx = mysql.connector.connect(user='mjmurphy', database='butterfly')
-	cursor = cnx.cursor()
-
-	# set up new observation
-	add_notes = ("INSERT INTO note_book "
-	               "(ID,note)"
-	               "VALUES (%s, %s)")
-	
-	insert_notes = note
-	# begin insert note_book
-	cursor.execute(insert_notes)
-
-	# add observation data
-	cursor.execute(insert_notes)
-
-	# commit new data and close the connection
-	cnx.commit()
-	cursor.close()
-	cnx.close()
 
 print("======= Add collection info =======")
 print("\n")
@@ -181,8 +148,3 @@ print("=========== Add notes =============")
 print("\n")
 add_notes()
 print("\n\n")
-
-# input the observations
-print("Inputting new observation(s) ... ")
-# add_observation(date, site, name, n)
-print("Observation(s) added to the database!")
